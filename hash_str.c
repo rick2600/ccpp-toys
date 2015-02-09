@@ -45,10 +45,12 @@ str_t *create_entry(char *str)
 
 void insert_str(hashtbl_t *hash_table, char *str)
 {
+  str_t *entry;
   unsigned long pos = (djb2(str) % hash_table->n_slots);
+
   if (!str_is_present(hash_table, str))
   {
-    str_t *entry = create_entry(str);
+    entry = create_entry(str);
     if (hash_table->slots[pos])
       entry->next = hash_table->slots[pos];
     
