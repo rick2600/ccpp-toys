@@ -50,9 +50,8 @@ void insert_str(hashtbl_t *hash_table, char *str)
   {
     str_t *entry = create_entry(str);
     if (hash_table->slots[pos])
-    {
       entry->next = hash_table->slots[pos];
-    }
+    
     hash_table->slots[pos] = entry;
   }
   else
