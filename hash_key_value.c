@@ -61,12 +61,29 @@ char *get_value(hashtbl_t *hash_table, char *key)
   return NULL;
 }
 
+key_value_t *entry_exist(hashtbl_t *hash_table, char *key)
+{
+  unsigned long pos = (djb2(key) % hash_table->n_slots);
+  int found = 0;
+  key_value_t *aux = hash_table->slots[pos];
+
+  while (aux) 
+  {
+    if (!strcmp(aux->key, key))
+      return aux;
+
+    aux = aux->next;
+  }
+  return NULL;
+}
+
 void insert_key_value(hashtbl_t *hash_table, char *key, char *value)
 {
   key_value_t *entry;
   unsigned long pos = (djb2(key) % hash_table->n_slots);
 
-  if (!get_value(hash_table, key))
+  entry = entry_exist(hash_table, key);
+  if (!entry)
   {
     entry = create_entry(key, value);
 
@@ -76,7 +93,10 @@ void insert_key_value(hashtbl_t *hash_table, char *key, char *value)
     hash_table->slots[pos] = entry;
   }
   else
-    printf("duplicated key is not allowed!\n");
+  {
+    free(entry->value);
+    entry->value = strdup(value);
+  }
 }
 
 
@@ -136,6 +156,12 @@ int main(int argc, char **argv)
   char *value;
 
   insert_key_value(hash_table, "key", "_V@lu3_");
+
+  value = get_value(hash_table, "key");
+  if (value)
+    printf("%s\n", value);
+
+  insert_key_value(hash_table, "key", "_V@lu3_updated_");
 
   value = get_value(hash_table, "key");
   if (value)
